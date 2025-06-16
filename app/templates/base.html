@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{{ _('Travel Journal')}}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='image/travel_icon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="{{ url_for('home') }}">{{ _('Home')}}</a>
+            {% if session.get('user_id') %}
+                <a href="{{ url_for('dashboard') }}">{{ _('Dashboard')}}</a>
+                <a href="{{ url_for('logout') }}">{{ _('Logout')}}</a>
+            {% endif %}
+            <button onclick="toggleDarkMode()">🌙</button>
+            <div class="language-switch">
+                <a href="{{ url_for('set_language', lang='en') }}">English</a> |
+                <a href="{{ url_for('set_language', lang='uk') }}">Українська</a>
+            </div>
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <script>
+        const body = document.body;
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') body.classList.add('dark-mode');
+
+        function toggleDarkMode() {
+            body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}{{ _('Dashboard')}}{% endblock %}
+{% block content %}
+<h2>{{ _('Your Notes')}}</h2>
+
+<div id="map" style="height: 400px; margin-bottom: 20px;"></div>
+
+<a href="{{ url_for('add_note') }}">{{ _('Add Note')}}</a>
+<ul>
+    {% for note in notes %}
+    <li class="note">
+        <h3>{{ note.title }}</h3>
+        <p>{{ note.content }}</p>
+        <p><small>{{ note.created_at.strftime('%Y-%m-%d %H:%M') }}</small></p>
+        {% if note.image_path %}
+            <img src="{{ url_for('static', filename=note.image_path) }}" width="200">
+        {% endif %}
+        <br>
+        <a href="{{ url_for('edit_note', note_id=note.id) }}">{{ _('Edit')}}</a> |
+        <a href="{{ url_for('delete_note', note_id=note.id) }}">{{ _('Delete')}}</a>
+    </li>
+    {% endfor %}
+</ul>
+
+<script>
+  const map = L.map('map').setView([48.8566, 2.3522], 3);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
+
+  const notes = [
+    {% for note in notes %}
+      {% if note.latitude and note.longitude %}
+        {
+          lat: {{ note.latitude }},
+          lng: {{ note.longitude }},
+          title: `{{ note.title | escape }}`,
+          content: `{{ note.content | escape }}`
+        },
+      {% endif %}
+    {% endfor %}
+  ];
+
+  notes.forEach(n => {
+    L.marker([n.lat, n.lng]).addTo(map)
+      .bindPopup(`<b>${n.title}</b><br>${n.content}`);
+  });
+</script>
+{% endblock %}

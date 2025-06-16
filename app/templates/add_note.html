@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}{{ _('Add Note')}}{% endblock %}
+{% block content %}
+<h2>{{ _('Add Note')}}</h2>
+<form method="POST" enctype="multipart/form-data">
+    <label>{{ _('Title:')}}</label><br>
+    <input type="text" name="title" required><br><br>
+    
+    <label>{{ _('Content:')}}</label><br>
+    <textarea name="content" required></textarea><br><br>
+    
+    <label>{{ _('Upload Image:')}}</label><br>
+    <input type="file" name="image" accept="image/*"><br><br>
+    
+    <!-- Це в <body> -->
+    <div id="map" style="height: 300px; margin-bottom: 10px;"></div>
+
+    <!-- Приховані поля -->
+    <input type="hidden" name="latitude" id="latitude">
+    <input type="hidden" name="longitude" id="longitude">
+    
+    <button type="submit">{{ _('Add Note')}}</button>
+</form>
+
+<script>
+  const map = L.map('map').setView([48.8566, 2.3522], 3); // початково — Париж
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+  }).addTo(map);
+
+  let marker;
+
+  map.on('click', function(e) {
+      const { lat, lng } = e.latlng;
+      if (marker) map.removeLayer(marker);
+      marker = L.marker([lat, lng]).addTo(map);
+      document.getElementById('latitude').value = lat;
+      document.getElementById('longitude').value = lng;
+  });
+</script>
+{% endblock %}

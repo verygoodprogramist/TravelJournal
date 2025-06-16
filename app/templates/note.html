@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}{{ note.title }}{% endblock %}
+{% block content %}
+
+<div class="note-detail">
+    <h1>{{ note.title }}</h1>
+    <p>{{ note.content }}</p>
+
+    {% if note.image_path %}
+        <img src="{{ url_for('static', filename=note.image_path) }}" alt="Note Image" class="note-image">
+    {% endif %}
+
+    <a href="{{ url_for('dashboard') }}"><button>{{ _('Back to Dashboard')}}</button></a>
+</div>
+
+{% endblock %}

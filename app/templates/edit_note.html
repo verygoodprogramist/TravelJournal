@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}{{ _('Edit Note')}}{% endblock %}
+{% block content %}
+<h2>{{ _('Edit Note')}}</h2>
+<form method="POST" enctype="multipart/form-data">
+    <label>{{ _('Title:')}}</label><br>
+    <input type="text" name="title" value="{{ note.title }}" required><br><br>
+
+    <label>{{ _('Content:')}}</label><br>
+    <textarea name="content" required>{{ note.content }}</textarea><br><br>
+
+    <label>{{ _('Replace Image (optional):')}}</label><br>
+    <input type="file" name="image" accept="image/*"><br><br>
+
+    <!-- Map + Hidden Inputs -->
+    <div id="map" style="height: 300px; margin-bottom: 10px;"></div>
+    <input type="hidden" name="latitude" id="latitude" value="{{ note.latitude }}">
+    <input type="hidden" name="longitude" id="longitude" value="{{ note.longitude }}">
+
+    <button type="submit">{{ _('Update')}}</button>
+</form>
+<p><a href="{{ url_for('dashboard') }}">{{ _('Back to Dashboard')}}</a></p>
+
+<script>
+  const map = L.map('map').setView([
+    {{ note.latitude or 48.8566 }},
+    {{ note.longitude or 2.3522 }}
+  ], 5);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
+
+  let marker;
+  const lat = parseFloat(document.getElementById('latitude').value);
+  const lng = parseFloat(document.getElementById('longitude').value);
+
+  if (!isNaN(lat) && !isNaN(lng)) {
+    marker = L.marker([lat, lng]).addTo(map);
+  }
+
+  map.on('click', function(e) {
+    const { lat, lng } = e.latlng;
+    if (marker) map.removeLayer(marker);
+    marker = L.marker([lat, lng]).addTo(map);
+    document.getElementById('latitude').value = lat;
+    document.getElementById('longitude').value = lng;
+  });
+</script>
+{% endblock %}

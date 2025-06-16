@@ -1,0 +1,10 @@
+{% extends 'base.html' %} 
+{% block title %}Register{% endblock %} 
+{% block content %}
+
+<h1>{{ _('Welcome') }}</h1>
+<p>{{ _('Please, Login or Register using your Google Acount')}}</p>
+<a href="{{ url_for('login') }}">{{ _('Login with Google')}}</a>
+<script scr="/app/static/js/script.js"></script>
+
+{% endblock %}
